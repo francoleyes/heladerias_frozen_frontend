@@ -17,8 +17,8 @@ function FormPay() {
   const [discountCode, setDiscountCode] = useState("");
   const navigate = useNavigate();
 
-  const handleDiscountCodeChange = (code) => {
-    setDiscountCode(code);
+  const handleDiscountCodeChange = (response) => {
+    setDiscountCode(response);
   };
 
   useEffect(() => {
@@ -28,19 +28,28 @@ function FormPay() {
 
   const sendOrder = async (e) => {
     e.preventDefault();
+    let totalProd = 0;
     const products = Object.keys(order).map((productId) => {
       const [id, image, price, quantity] = order[productId];
+      totalProd += price * quantity;
       return {
         product: id,
         quantity: quantity,
       };
     });
 
-    const payload = JSON.stringify({
+    let payload = {
+      total: 0,
       name_buyer: name,
       products,
-      ...(discountCode && { code: discountCode }),
-    });
+      ...(discountCode && { code: discountCode.code }),
+    };
+    if (discountCode) {
+      payload.total = totalProd - discountCode.discount;
+    } else {
+      payload.total = totalProd;
+    }
+    payload = JSON.stringify(payload);
 
     try {
       await addOrder(payload);

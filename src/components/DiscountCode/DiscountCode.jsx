@@ -14,7 +14,7 @@ export default function DiscountCode({onDiscountCodeChange}) {
       onDiscountCodeChange(false)
     } else {
       setVerified(response.code);
-      onDiscountCodeChange(response.code)
+      onDiscountCodeChange(response)
     } 
   };
 
